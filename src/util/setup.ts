@@ -1,5 +1,5 @@
 import { Client, Events, GatewayIntentBits } from 'discord.js';
-import { routeInteraction } from '../commands/router.js';
+import { routeInteraction } from '../interactions/router';
 
 export function setupClient() {
   const client = new Client({ intents: [GatewayIntentBits.Guilds] });
@@ -11,4 +11,6 @@ export function setupClient() {
   client.on(Events.InteractionCreate, async event => {
     routeInteraction(event);
   });
+
+  return client;
 }

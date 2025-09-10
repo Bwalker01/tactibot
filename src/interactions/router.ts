@@ -1,5 +1,5 @@
 import type { Interaction } from "discord.js";
-import { isChatInputCommand } from "../util/interactionTypeGuard.js";
+import { isChatInputCommand } from "../util/interactionTypeGuard";
 
 export async function routeInteraction(event: Interaction) {
     if (isChatInputCommand(event)) {
