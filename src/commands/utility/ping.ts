@@ -11,4 +11,4 @@ const pingCommand = {
 	execute: ping,
 };
 
-export default pingCommand;
+export default pingCommand; 
