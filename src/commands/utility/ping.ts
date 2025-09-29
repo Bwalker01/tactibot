@@ -5,10 +5,8 @@ const ping = async (interaction: ChatInputCommandInteraction) => {
 };
 
 const pingCommand = {
-	data: new SlashCommandBuilder()
-	.setName('ping')
-	.setDescription("Gets the bot's latency."),
+	data: new SlashCommandBuilder().setName('ping').setDescription("Gets the bot's latency."),
 	execute: ping,
 };
 
-export default pingCommand; 
+export default pingCommand;

@@ -9,6 +9,6 @@ if (!token) {
 	throw new Error('TOKEN is not set');
 }
 
-portCommands({token, clientId: client.user?.id ?? ''});
+portCommands({ token, clientId: client.user?.id ?? '' });
 
 client.login(token);
