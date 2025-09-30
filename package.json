@@ -4,6 +4,7 @@
 	"main": "bot.js",
 	"scripts": {
 		"test": "jest --verbose",
+		"test:coverage": "jest --coverage",
 		"format:write": "prettier --write .",
 		"format:check": "prettier --check .",
 		"build": "tsc",
