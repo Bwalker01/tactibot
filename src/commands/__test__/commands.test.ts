@@ -1,4 +1,4 @@
-import commands from './commands';
+import commands from '../commands';
 
 describe('Verify all commands:', () => {
 	Object.entries(commands).forEach(([categoryName, category]) => {
