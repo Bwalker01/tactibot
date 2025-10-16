@@ -9,4 +9,4 @@ const addWantCommand = {
 	execute: addWant,
 };
 
-export default pingCommand;
+export default addWantCommand;
