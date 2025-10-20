@@ -16,8 +16,8 @@ describe('eightball', () => {
 		const mockInteraction = {
 			...mockInteractionBasics,
 			options: {
-                getString: jest.fn().mockReturnValue('Test question?'),
-            },
+				getString: jest.fn().mockReturnValue('Test question?'),
+			},
 		} as unknown as ChatInputCommandInteraction;
 
 		await eightballCommand.execute(mockInteraction);
@@ -29,8 +29,8 @@ describe('eightball', () => {
 		const mockInteraction = {
 			...mockInteractionBasics,
 			options: {
-                getString: jest.fn().mockReturnValue('Will it rain today'),
-            },
+				getString: jest.fn().mockReturnValue('Will it rain today'),
+			},
 		} as unknown as ChatInputCommandInteraction;
 
 		await eightballCommand.execute(mockInteraction);
@@ -42,8 +42,8 @@ describe('eightball', () => {
 		const mockInteraction = {
 			...mockInteractionBasics,
 			options: {
-                getString: jest.fn().mockReturnValue('Is this working.'),
-            },
+				getString: jest.fn().mockReturnValue('Is this working.'),
+			},
 		} as unknown as ChatInputCommandInteraction;
 
 		await eightballCommand.execute(mockInteraction);
@@ -51,25 +51,25 @@ describe('eightball', () => {
 		expect(mockInteraction.reply).toHaveBeenCalledWith('**Is this working?**\nIt is certain');
 	});
 
-    it('should handle question ending with exclamation mark', async () => {
+	it('should handle question ending with exclamation mark', async () => {
 		const mockInteraction = {
 			...mockInteractionBasics,
 			options: {
-                getString: jest.fn().mockReturnValue('Now I\'m shouting!'),
-            },
+				getString: jest.fn().mockReturnValue("Now I'm shouting!"),
+			},
 		} as unknown as ChatInputCommandInteraction;
 
 		await eightballCommand.execute(mockInteraction);
 
-		expect(mockInteraction.reply).toHaveBeenCalledWith('**Now I\'m shouting?**\nIt is certain');
+		expect(mockInteraction.reply).toHaveBeenCalledWith("**Now I'm shouting?**\nIt is certain");
 	});
 
 	it('should return error message when no question provided', async () => {
 		const mockInteraction = {
 			...mockInteractionBasics,
 			options: {
-                getString: jest.fn().mockReturnValue(null),
-            },
+				getString: jest.fn().mockReturnValue(null),
+			},
 		} as unknown as ChatInputCommandInteraction;
 
 		await eightballCommand.execute(mockInteraction);

@@ -4,7 +4,7 @@ const eightball = async (interaction: ChatInputCommandInteraction) => {
 	const eightballResponses = [
 		'It is certain',
 		'Reply hazy, try again',
-		'Don\'t count on it',
+		"Don't count on it",
 		'It is decidedly so',
 		'Ask again later',
 		'My reply is no',
@@ -36,7 +36,7 @@ const eightball = async (interaction: ChatInputCommandInteraction) => {
 		}
 		formattedQuestion += '?';
 	}
-	
+
 	await interaction.reply(`**${formattedQuestion}**\n${response}`);
 };
 
