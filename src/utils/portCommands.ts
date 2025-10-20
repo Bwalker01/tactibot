@@ -3,16 +3,21 @@ import commands from '../commands/commands';
 
 export async function portCommands({ token, clientId }: { token: string; clientId: string }) {
 	const rest = new REST().setToken(token);
+	
+	// Flatten all commands from all categories into a single array
+	const allCommands = Object.values(commands).flatMap((category) => Object.values(category));
+	
 	try {
-		console.log('Refreshing commands...');
-		await rest.delete(Routes.applicationCommands(clientId));
-		Object.keys(commands).forEach(async (category) => {
-			console.log(`Creating ${category} commands...`);
-			const categoryCommands = commands[category as keyof typeof commands];
-			await rest.put(Routes.applicationCommands(clientId), { body: categoryCommands });
-			console.log(`${category.charAt(0).toUpperCase() + category.slice(1)} commands created.`);
-		});
+		console.log(`Started refreshing ${allCommands.length} application (/) commands.`);
+		
+		// PUT will automatically add/update/remove commands as needed
+		await rest.put(
+			Routes.applicationCommands(clientId),
+			{ body: allCommands }
+		);
+		
+		console.log(`Successfully reloaded ${allCommands.length} application (/) commands.`);
 	} catch (error) {
-		console.error(error);
+		console.error('Error refreshing commands:', error);
 	}
 }
