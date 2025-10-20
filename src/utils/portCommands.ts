@@ -4,8 +4,10 @@ import commands from '../commands/commands';
 export async function portCommands({ token, clientId }: { token: string; clientId: string }) {
 	const rest = new REST().setToken(token);
 	
-	// Flatten all commands from all categories into a single array
-	const allCommands = Object.values(commands).flatMap((category) => Object.values(category));
+	// Flatten all commands and extract the data (SlashCommandBuilder) as JSON
+	const allCommands = Object.values(commands)
+		.flatMap((category) => Object.values(category))
+		.map((command) => command.data.toJSON());
 	
 	try {
 		console.log(`Started refreshing ${allCommands.length} application (/) commands.`);
