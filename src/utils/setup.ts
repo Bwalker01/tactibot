@@ -1,6 +1,5 @@
 import { Client, Events, GatewayIntentBits } from 'discord.js';
 import { routeInteraction } from '../interactions/router';
-import { isChatInputCommand } from './interactionTypeGuard';
 import { portCommands } from './portCommands';
 
 export function setupClient(token: string) {
@@ -12,9 +11,7 @@ export function setupClient(token: string) {
 	});
 
 	client.on(Events.InteractionCreate, async (event) => {
-		if (!isChatInputCommand(event)) {
-			routeInteraction(event);
-		}
+		await routeInteraction(event);
 	});
 
 	return client;
