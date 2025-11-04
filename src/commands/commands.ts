@@ -1,4 +1,5 @@
 import eightballCommand from './fun/eightball';
+import allWantedCardsCommand from './trading/allWantedCards';
 import pingCommand from './utility/ping';
 
 const commands = {
@@ -7,6 +8,9 @@ const commands = {
 	},
 	fun: {
 		eightball: eightballCommand,
+	},
+	trading: {
+		wantedCards: allWantedCardsCommand,
 	},
 };
 
