@@ -24,6 +24,7 @@
 	"homepage": "https://github.com/Bwalker01/tactibot#readme",
 	"description": "",
 	"devDependencies": {
+		"@railway/cli": "^4.11.0",
 		"@types/jest": "^30.0.0",
 		"@types/pg": "^8.15.6",
 		"jest": "^30.1.3",
