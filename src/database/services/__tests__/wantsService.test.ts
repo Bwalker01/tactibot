@@ -2,7 +2,7 @@ import { DatabaseController } from '../../databaseController';
 import {
 	getAllWantedCardsOfUser,
 	getAllUsersOfWantedCard,
-    getAllWantedCards,
+	getAllWantedCards,
 } from '../wantsService';
 
 // Mock the DatabaseController
@@ -25,16 +25,24 @@ describe('wantsService', () => {
 		} as unknown as jest.Mocked<DatabaseController>;
 
 		// Mock getInstance to return our mock
-		(DatabaseController.getInstance as jest.Mock).mockReturnValue(
-			mockDatabaseController
-		);
+		(DatabaseController.getInstance as jest.Mock).mockReturnValue(mockDatabaseController);
 	});
 
 	describe('getWantedCards', () => {
 		it('should return all wanted cards', async () => {
 			const mockRows = [
-				{ id: 1, user_id: '123', card_name: 'Card A', scryfall_link: 'https://scryfall.com/card/123/card-a' },
-				{ id: 2, user_id: '456', card_name: 'Card B', scryfall_link: 'https://scryfall.com/card/456/card-b' },
+				{
+					id: 1,
+					user_id: '123',
+					card_name: 'Card A',
+					scryfall_link: 'https://scryfall.com/card/123/card-a',
+				},
+				{
+					id: 2,
+					user_id: '456',
+					card_name: 'Card B',
+					scryfall_link: 'https://scryfall.com/card/456/card-b',
+				},
 			];
 
 			mockQueryAll.mockResolvedValue({ rows: mockRows });
@@ -43,12 +51,14 @@ describe('wantsService', () => {
 
 			expect(DatabaseController.getInstance).toHaveBeenCalled();
 			expect(mockQueryAll).toHaveBeenCalledWith('SELECT * FROM wanted_cards');
-			expect(result).toEqual(mockRows.map((row) => ({
-				id: row.id,
-				userId: row.user_id,
-				cardName: row.card_name,
-				cardLink: row.scryfall_link,
-			})));
+			expect(result).toEqual(
+				mockRows.map((row) => ({
+					id: row.id,
+					userId: row.user_id,
+					cardName: row.card_name,
+					cardLink: row.scryfall_link,
+				}))
+			);
 		});
 
 		it('should return an empty array when no cards are found', async () => {
@@ -82,10 +92,9 @@ describe('wantsService', () => {
 			const result = await getAllWantedCardsOfUser(userId);
 
 			expect(DatabaseController.getInstance).toHaveBeenCalled();
-			expect(mockQueryAll).toHaveBeenCalledWith(
-				'SELECT * FROM wanted_cards WHERE user_id = $1',
-				[userId]
-			);
+			expect(mockQueryAll).toHaveBeenCalledWith('SELECT * FROM wanted_cards WHERE user_id = $1', [
+				userId,
+			]);
 			expect(result).toEqual(mockRows);
 		});
 
@@ -95,10 +104,9 @@ describe('wantsService', () => {
 
 			const result = await getAllWantedCardsOfUser(userId);
 
-			expect(mockQueryAll).toHaveBeenCalledWith(
-				'SELECT * FROM wanted_cards WHERE user_id = $1',
-				[userId]
-			);
+			expect(mockQueryAll).toHaveBeenCalledWith('SELECT * FROM wanted_cards WHERE user_id = $1', [
+				userId,
+			]);
 			expect(result).toEqual([]);
 		});
 
@@ -107,13 +115,10 @@ describe('wantsService', () => {
 			const error = new Error('Database query failed');
 			mockQueryAll.mockRejectedValue(error);
 
-			await expect(getAllWantedCardsOfUser(userId)).rejects.toThrow(
-				'Database query failed'
-			);
-			expect(mockQueryAll).toHaveBeenCalledWith(
-				'SELECT * FROM wanted_cards WHERE user_id = $1',
-				[userId]
-			);
+			await expect(getAllWantedCardsOfUser(userId)).rejects.toThrow('Database query failed');
+			expect(mockQueryAll).toHaveBeenCalledWith('SELECT * FROM wanted_cards WHERE user_id = $1', [
+				userId,
+			]);
 		});
 
 		it('should handle empty string userId', async () => {
@@ -122,10 +127,9 @@ describe('wantsService', () => {
 
 			const result = await getAllWantedCardsOfUser(userId);
 
-			expect(mockQueryAll).toHaveBeenCalledWith(
-				'SELECT * FROM wanted_cards WHERE user_id = $1',
-				[userId]
-			);
+			expect(mockQueryAll).toHaveBeenCalledWith('SELECT * FROM wanted_cards WHERE user_id = $1', [
+				userId,
+			]);
 			expect(result).toEqual([]);
 		});
 	});
@@ -144,10 +148,9 @@ describe('wantsService', () => {
 			const result = await getAllUsersOfWantedCard(cardName);
 
 			expect(DatabaseController.getInstance).toHaveBeenCalled();
-			expect(mockQueryAll).toHaveBeenCalledWith(
-				'SELECT * FROM wanted_cards WHERE card_name = $1',
-				[cardName]
-			);
+			expect(mockQueryAll).toHaveBeenCalledWith('SELECT * FROM wanted_cards WHERE card_name = $1', [
+				cardName,
+			]);
 			expect(result).toEqual(mockRows);
 		});
 
@@ -157,10 +160,9 @@ describe('wantsService', () => {
 
 			const result = await getAllUsersOfWantedCard(cardName);
 
-			expect(mockQueryAll).toHaveBeenCalledWith(
-				'SELECT * FROM wanted_cards WHERE card_name = $1',
-				[cardName]
-			);
+			expect(mockQueryAll).toHaveBeenCalledWith('SELECT * FROM wanted_cards WHERE card_name = $1', [
+				cardName,
+			]);
 			expect(result).toEqual([]);
 		});
 
@@ -169,29 +171,23 @@ describe('wantsService', () => {
 			const error = new Error('Database query failed');
 			mockQueryAll.mockRejectedValue(error);
 
-			await expect(getAllUsersOfWantedCard(cardName)).rejects.toThrow(
-				'Database query failed'
-			);
-			expect(mockQueryAll).toHaveBeenCalledWith(
-				'SELECT * FROM wanted_cards WHERE card_name = $1',
-				[cardName]
-			);
+			await expect(getAllUsersOfWantedCard(cardName)).rejects.toThrow('Database query failed');
+			expect(mockQueryAll).toHaveBeenCalledWith('SELECT * FROM wanted_cards WHERE card_name = $1', [
+				cardName,
+			]);
 		});
 
 		it('should handle card names with special characters', async () => {
 			const cardName = "Card's Name (Special Edition)";
-			const mockRows = [
-				{ id: 1, user_id: '123', card_name: cardName },
-			];
+			const mockRows = [{ id: 1, user_id: '123', card_name: cardName }];
 
 			mockQueryAll.mockResolvedValue({ rows: mockRows });
 
 			const result = await getAllUsersOfWantedCard(cardName);
 
-			expect(mockQueryAll).toHaveBeenCalledWith(
-				'SELECT * FROM wanted_cards WHERE card_name = $1',
-				[cardName]
-			);
+			expect(mockQueryAll).toHaveBeenCalledWith('SELECT * FROM wanted_cards WHERE card_name = $1', [
+				cardName,
+			]);
 			expect(result).toEqual(mockRows);
 		});
 
@@ -201,12 +197,10 @@ describe('wantsService', () => {
 
 			const result = await getAllUsersOfWantedCard(cardName);
 
-			expect(mockQueryAll).toHaveBeenCalledWith(
-				'SELECT * FROM wanted_cards WHERE card_name = $1',
-				[cardName]
-			);
+			expect(mockQueryAll).toHaveBeenCalledWith('SELECT * FROM wanted_cards WHERE card_name = $1', [
+				cardName,
+			]);
 			expect(result).toEqual([]);
 		});
 	});
 });
-

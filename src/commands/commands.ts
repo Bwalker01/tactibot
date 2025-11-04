@@ -11,7 +11,7 @@ const commands = {
 	},
 	trading: {
 		wantedCards: allWantedCardsCommand,
-	}
+	},
 };
 
 export default commands;
