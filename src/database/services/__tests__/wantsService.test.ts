@@ -6,7 +6,13 @@ import {
 } from '../wantsService';
 
 // Mock the DatabaseController
-jest.mock('../../databaseController');
+jest.mock('../../databaseController', () => {
+	return {
+		DatabaseController: {
+			getInstance: jest.fn(),
+		},
+	};
+});
 
 describe('wantsService', () => {
 	let mockDatabaseController: jest.Mocked<DatabaseController>;
