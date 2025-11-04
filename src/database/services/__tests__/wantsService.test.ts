@@ -5,18 +5,16 @@ import {
 	getAllWantedCards,
 } from '../wantsService';
 
-// Mock the DatabaseController
-jest.mock('../../databaseController', () => {
-	return {
-		DatabaseController: {
-			getInstance: jest.fn(),
-		},
-	};
-});
+// Mock the DatabaseController module
+jest.mock('../../databaseController');
+
+// Get the actual DatabaseController class for spying
+const { DatabaseController: ActualDatabaseController } = jest.requireActual<typeof import('../../databaseController')>('../../databaseController');
 
 describe('wantsService', () => {
 	let mockDatabaseController: jest.Mocked<DatabaseController>;
 	let mockQueryAll: jest.Mock;
+	let getInstanceSpy: jest.SpyInstance;
 
 	beforeEach(() => {
 		// Reset mocks before each test
@@ -30,8 +28,19 @@ describe('wantsService', () => {
 			queryAll: mockQueryAll,
 		} as unknown as jest.Mocked<DatabaseController>;
 
-		// Mock getInstance to return our mock
-		(DatabaseController.getInstance as jest.Mock).mockReturnValue(mockDatabaseController);
+		// Use jest.spyOn on the actual class to mock the static method getInstance
+		// This explicitly bypasses singleton logic by replacing the implementation
+		getInstanceSpy = jest
+			.spyOn(ActualDatabaseController, 'getInstance')
+			.mockImplementation(() => mockDatabaseController);
+		
+		// Also ensure the mocked module's getInstance points to our spy
+		(DatabaseController as any).getInstance = getInstanceSpy;
+	});
+
+	afterEach(() => {
+		// Restore all mocks after each test
+		jest.restoreAllMocks();
 	});
 
 	describe('getWantedCards', () => {
@@ -55,7 +64,7 @@ describe('wantsService', () => {
 
 			const result = await getAllWantedCards();
 
-			expect(DatabaseController.getInstance).toHaveBeenCalled();
+			expect(getInstanceSpy).toHaveBeenCalled();
 			expect(mockQueryAll).toHaveBeenCalledWith('SELECT * FROM wanted_cards');
 			expect(result).toEqual(
 				mockRows.map((row) => ({
@@ -97,7 +106,7 @@ describe('wantsService', () => {
 
 			const result = await getAllWantedCardsOfUser(userId);
 
-			expect(DatabaseController.getInstance).toHaveBeenCalled();
+			expect(getInstanceSpy).toHaveBeenCalled();
 			expect(mockQueryAll).toHaveBeenCalledWith('SELECT * FROM wanted_cards WHERE user_id = $1', [
 				userId,
 			]);
@@ -153,7 +162,7 @@ describe('wantsService', () => {
 
 			const result = await getAllUsersOfWantedCard(cardName);
 
-			expect(DatabaseController.getInstance).toHaveBeenCalled();
+			expect(getInstanceSpy).toHaveBeenCalled();
 			expect(mockQueryAll).toHaveBeenCalledWith('SELECT * FROM wanted_cards WHERE card_name = $1', [
 				cardName,
 			]);
