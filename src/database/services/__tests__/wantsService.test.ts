@@ -9,7 +9,9 @@ import {
 jest.mock('../../databaseController');
 
 // Get the actual DatabaseController class for spying
-const { DatabaseController: ActualDatabaseController } = jest.requireActual<typeof import('../../databaseController')>('../../databaseController');
+const { DatabaseController: ActualDatabaseController } = jest.requireActual<
+	typeof import('../../databaseController')
+>('../../databaseController');
 
 describe('wantsService', () => {
 	let mockDatabaseController: jest.Mocked<DatabaseController>;
@@ -33,7 +35,7 @@ describe('wantsService', () => {
 		getInstanceSpy = jest
 			.spyOn(ActualDatabaseController, 'getInstance')
 			.mockImplementation(() => mockDatabaseController);
-		
+
 		// Also ensure the mocked module's getInstance points to our spy
 		(DatabaseController as any).getInstance = getInstanceSpy;
 	});
