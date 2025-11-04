@@ -27,7 +27,7 @@ const allWantedCards = async (interaction: ChatInputCommandInteraction) => {
 const allWantedCardsCommand = {
 	data: new SlashCommandBuilder()
 		.setName('wanted-cards')
-		.setDescription('Shows all the wanted cards of players.'),
+		.setDescription('Shows all the wanted cards of users in this server.'),
 	execute: allWantedCards,
 };
 
