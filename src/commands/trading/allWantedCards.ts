@@ -1,6 +1,6 @@
 import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import { getAllWantedCards } from '../../database/services/wantsService';
-import { footerGenerator } from '../../utils/footerGenerator';
+import { quoteGenerator } from '../../utils/quoteGenerator';
 
 const allWantedCards = async (interaction: ChatInputCommandInteraction) => {
 	const wantedCards = await getAllWantedCards();
@@ -15,13 +15,17 @@ const allWantedCards = async (interaction: ChatInputCommandInteraction) => {
 		}
 	}
 
-	const embed = new EmbedBuilder().setTitle('Wanted Cards:').setFooter({ text: footerGenerator() });
+	const embed = new EmbedBuilder()
+		.setTitle('Wants:')
+		.setDescription('Here is a list of all the cards that users want to trade for:')
+		.setFooter({ text: `Tactibot | ${process.version}` });
 	for (const { userName, cards } of allCards) {
 		embed.addFields({
 			name: userName,
 			value: cards.map((card) => `[${card.cardName}](${card.cardLink})`).join('\n'),
 		});
 	}
+	embed.addFields(quoteGenerator());
 	await interaction.reply({ embeds: [embed], ephemeral: true });
 };
 
