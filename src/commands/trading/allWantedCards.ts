@@ -7,7 +7,9 @@ const allWantedCards = async (interaction: ChatInputCommandInteraction) => {
 	const wantedCards = await getAllWantedCards();
 	const allCards: { userName: string; cards: WantedCard[] }[] = [];
 	for (const card of wantedCards) {
-		const user = interaction.guild?.members.cache.get(card.userId);
+		const user =
+			interaction.guild?.members.cache.get(card.userId) ||
+			(await interaction.client.users.fetch(card.userId));
 		if (!user) continue;
 		if (allCards.map((listItem) => listItem.userName).includes(user.displayName)) {
 			allCards.find((listItem) => listItem.userName === user.displayName)?.cards.push(card);
