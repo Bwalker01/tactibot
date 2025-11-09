@@ -1,10 +1,10 @@
 export const quoteGenerator = () => {
 	const quote = quotes[Math.floor(Math.random() * quotes.length)]!;
 	return {
-		name: `*${quote.quote}*`,
+		name: `"*${quote.quote}*"`,
 		value: quote.author
 			? `~ ${quote.author} | [${quote.card}](${quote.cardLink})`
-			: `[${quote.card}](${quote.cardLink})`,
+			: `~ [${quote.card}](${quote.cardLink})`,
 	};
 };
 

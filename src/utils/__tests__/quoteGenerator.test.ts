@@ -4,8 +4,8 @@ describe('quoteGenerator', () => {
 	it('should return with the expected format', () => {
 		const result = quoteGenerator();
 		// Format: "quote ~author | [card](link)"
-		expect(result.name).toMatch(/^\*.*\*$/);
-		expect(result.value).toMatch(/^(~ .+\ \| )?\[.+\]\((https\:\/\/scryfall\.com\/card\/).+\)$/);
+		expect(result.name).toMatch(/^"\*.*\*"$/);
+		expect(result.value).toMatch(/^~ (.+\ \| )?\[.+\]\((https\:\/\/scryfall\.com\/card\/).+\)$/);
 	});
 
 	describe('specific quote validation', () => {
