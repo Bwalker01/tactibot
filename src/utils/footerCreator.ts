@@ -1,5 +1,5 @@
 import { VERSION } from './constants';
 
 export const footerCreator = () => {
-	return `Tactibot | ${VERSION}`;
+	return `Tactibot | v${VERSION}`;
 };
