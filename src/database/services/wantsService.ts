@@ -22,3 +22,20 @@ export const getAllUsersOfWantedCard = async (cardName: string) => {
 	const result = await db.queryAll('SELECT * FROM wanted_cards WHERE card_name = $1', [cardName]);
 	return result.rows;
 };
+
+export const addWantedCard = async ({
+	userId,
+	cardName,
+	cardLink,
+}: {
+	userId: string;
+	cardName: string;
+	cardLink: string;
+}): Promise<boolean> => {
+	const db = DatabaseController.getInstance();
+	const result = await db.execute(
+		'INSERT INTO wanted_cards (user_id, card_name, scryfall_link) VALUES ($1, $2, $3)',
+		[userId, cardName, cardLink]
+	);
+	return result;
+};
