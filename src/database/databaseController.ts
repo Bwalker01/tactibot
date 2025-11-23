@@ -11,10 +11,9 @@ export class DatabaseController {
 	private readonly pool: Pool;
 
 	private constructor() {
+		console.log(process.env.DATABASE_URL);
 		this.pool = new Pool({
 			connectionString: process.env.DATABASE_URL,
-			user: process.env.DATABASE_USER,
-			password: process.env.DATABASE_PASSWORD,
 		});
 	}
 

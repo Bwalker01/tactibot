@@ -1,4 +1,5 @@
 import { DatabaseController } from '../databaseController';
+import { WantedCard } from '../types/wantedCards';
 
 export const getAllWantedCards = async (): Promise<WantedCard[]> => {
 	const db = DatabaseController.getInstance();
