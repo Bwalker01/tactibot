@@ -34,11 +34,11 @@ const newWantedCard = async (interaction: ChatInputCommandInteraction) => {
 
 const newWantedCardCommand = {
 	data: new SlashCommandBuilder()
-		.setName('new-wanted-card')
+		.setName('want')
 		.setDescription('Adds a new wanted card to the database.')
 		.addStringOption((option) =>
 			option
-				.setName('card-name')
+				.setName('card')
 				.setDescription('The name of the card you want to add.')
 				.setRequired(true)
 		),
