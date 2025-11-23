@@ -2,6 +2,7 @@ import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from '
 import { getAllWantedCards } from '../../database/services/wantsService';
 import { quoteGenerator } from '../../utils/quoteGenerator';
 import { footerCreator } from '../../utils/footerCreator';
+import { WantedCard } from '../../database/types/wantedCards';
 
 const allWantedCards = async (interaction: ChatInputCommandInteraction) => {
 	const wantedCards = await getAllWantedCards();
@@ -34,7 +35,7 @@ const allWantedCards = async (interaction: ChatInputCommandInteraction) => {
 
 const allWantedCardsCommand = {
 	data: new SlashCommandBuilder()
-		.setName('wanted-cards')
+		.setName('all-wants')
 		.setDescription('Shows all the wanted cards of users in this server.'),
 	execute: allWantedCards,
 };

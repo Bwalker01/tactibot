@@ -3,7 +3,7 @@ import { SCRYFALL_API_URL } from '../../utils/constants';
 import { addWantedCard } from '../../database/services/wantsService';
 
 const newWantedCard = async (interaction: ChatInputCommandInteraction) => {
-	const cardName = interaction.options.getString('card-name');
+	const cardName = interaction.options.getString('card');
 	const formattedName = cardName?.toLowerCase().replace(/ /g, '+');
 	const url = `${SCRYFALL_API_URL}/cards/named?fuzzy=${formattedName}`;
 	const response = await fetch(url);

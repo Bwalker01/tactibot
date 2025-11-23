@@ -1,4 +1,4 @@
-type WantedCard = {
+export type WantedCard = {
 	id: number;
 	userId: string;
 	cardName: string;

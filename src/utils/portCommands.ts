@@ -9,6 +9,8 @@ export async function portCommands({ token, clientId }: { token: string; clientI
 		.flatMap((category) => Object.values(category))
 		.map((command) => command.data.toJSON());
 
+	console.log(allCommands.map((command) => command.name));
+
 	try {
 		console.log(`Started refreshing ${allCommands.length} application (/) commands.`);
 
