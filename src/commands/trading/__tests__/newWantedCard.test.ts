@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction, EmbedBuilder } from 'discord.js';
+import { ChatInputCommandInteraction } from 'discord.js';
 import newWantedCardCommand from '../newWantedCard';
 import { addWantedCard } from '../../../database/services/wantsService';
 import { mockInteractionBasics } from '../../../utils/testUtils';
@@ -9,7 +9,10 @@ global.fetch = mockFetch as typeof fetch;
 
 // Mock the wantsService
 jest.mock('../../../database/services/wantsService');
-const mockAddWantedCard = addWantedCard as ReturnType<typeof jest.fn>;
+const mockAddWantedCard = addWantedCard as jest.Mock<
+	Promise<boolean>,
+	Parameters<typeof addWantedCard>
+>;
 
 let mockCardData: { name: string; scryfall_uri: string; [key: string]: string | undefined };
 
