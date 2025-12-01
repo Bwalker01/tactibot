@@ -29,19 +29,39 @@ export class DatabaseController {
 		queryString: string,
 		params?: any[]
 	): Promise<{ rows: T[] }> {
-		const result = await this.pool.query<T>(queryString, params);
-		return { rows: result.rows };
+		try {
+			const result = await this.pool.query<T>(queryString, params);
+			return { rows: result.rows };
+		} catch (error) {
+			throw new Error(`Database error: ${error}`);
+		}
 	}
 
 	public async queryOne<T extends QueryResultRow>(
 		queryString: string,
 		params?: any[]
 	): Promise<T | null> {
-		const result = await this.pool.query<T>(queryString, params);
-		if (result.rows.length > 1) {
-			throw new Error('Multiple rows returned for a query expecting one.');
+		try {
+			const result = await this.pool.query<T>(queryString, params);
+			if (result.rows.length > 1) {
+				throw new Error('Multiple rows returned for a query expecting one.');
+			}
+			return result.rows[0] || null;
+		} catch (error) {
+			throw new Error(`Database error: ${error}`);
 		}
-		return result.rows[0] || null;
+	}
+
+	public async execute(queryString: string, params?: any[]): Promise<boolean> {
+		try {
+			const result = await this.pool.query(queryString, params);
+			if (result) {
+				return true;
+			}
+			return false;
+		} catch (error) {
+			throw new Error(`Database error ${error}`);
+		}
 	}
 
 	public async close() {
