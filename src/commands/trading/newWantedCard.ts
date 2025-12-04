@@ -13,8 +13,7 @@ const newWantedCard = async (interaction: ChatInputCommandInteraction) => {
 	}
 	const result = await addWantedCard({
 		userId: interaction.user.id,
-		cardName: data.name,
-		cardLink: data.scryfall_uri,
+		cards: [{ name: data.name, link: data.scryfall_uri }],
 	});
 	if (result) {
 		const imageUrl =
@@ -35,12 +34,9 @@ const newWantedCard = async (interaction: ChatInputCommandInteraction) => {
 const newWantedCardCommand = {
 	data: new SlashCommandBuilder()
 		.setName('want')
-		.setDescription('Adds a new wanted card to the database.')
+		.setDescription('Add a new wanted card to your list.')
 		.addStringOption((option) =>
-			option
-				.setName('card')
-				.setDescription('The name of the card you want to add.')
-				.setRequired(true)
+			option.setName('card').setDescription('The name of the card you want.').setRequired(true)
 		),
 	execute: newWantedCard,
 };

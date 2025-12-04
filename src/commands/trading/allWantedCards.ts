@@ -2,20 +2,16 @@ import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from '
 import { getAllWantedCards } from '../../database/services/wantsService';
 import { quoteGenerator } from '../../utils/quoteGenerator';
 import { footerCreator } from '../../utils/footerCreator';
-import { WantedCard } from '../../database/types/wantedCards';
+import { UserWantedCards } from '../../database/types/wantedCards';
 
 const allWantedCards = async (interaction: ChatInputCommandInteraction) => {
 	const wantedCards = await getAllWantedCards();
-	const allCards: { userName: string; cards: WantedCard[] }[] = [];
-	for (const card of wantedCards) {
-		const user =
-			interaction.guild?.members.cache.get(card.userId) ||
-			(await interaction.client.users.fetch(card.userId));
-		if (!user) continue;
-		if (allCards.map((listItem) => listItem.userName).includes(user.displayName)) {
-			allCards.find((listItem) => listItem.userName === user.displayName)?.cards.push(card);
+	const allCards: UserWantedCards[] = [];
+	for (const want of wantedCards) {
+		if (allCards.map((listItem) => listItem.userId).includes(interaction.user.id)) {
+			allCards.find((listItem) => listItem.userId === interaction.user.id)?.cards.push(want.card);
 		} else {
-			allCards.push({ userName: user.displayName, cards: [card] });
+			allCards.push({ userId: interaction.user.id, cards: [want.card] });
 		}
 	}
 
@@ -23,10 +19,13 @@ const allWantedCards = async (interaction: ChatInputCommandInteraction) => {
 		.setTitle('Wants:')
 		.setDescription('Here is a list of all the cards that users want to trade for:')
 		.setFooter({ text: footerCreator() });
-	for (const { userName, cards } of allCards) {
+	for (const wants of allCards) {
+		const user =
+			interaction.guild?.members.cache.get(wants.userId) ||
+			(await interaction.client.users.fetch(wants.userId));
 		embed.addFields({
-			name: userName,
-			value: cards.map((card) => `[${card.cardName}](${card.cardLink})`).join('\n'),
+			name: user.displayName,
+			value: wants.cards.map((card) => `[${card.name}](${card.link})`).join('\n'),
 		});
 	}
 	embed.addFields(quoteGenerator());
@@ -36,7 +35,7 @@ const allWantedCards = async (interaction: ChatInputCommandInteraction) => {
 const allWantedCardsCommand = {
 	data: new SlashCommandBuilder()
 		.setName('all-wants')
-		.setDescription('Shows all the wanted cards of users in this server.'),
+		.setDescription("See everyone's wanted cards."),
 	execute: allWantedCards,
 };
 
