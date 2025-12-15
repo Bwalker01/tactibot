@@ -4,6 +4,7 @@ import {
 	EmbedBuilder,
 	SlashCommandBuilder,
 	StringSelectMenuBuilder,
+	StringSelectMenuInteraction,
 } from 'discord.js';
 import { getAllWantedCardsOfUser } from '../../database/services/wantsService';
 import { footerCreator } from '../../utils/footerCreator';
@@ -19,7 +20,7 @@ const myWantedCards = async (interaction: ChatInputCommandInteraction) => {
 	embed.addFields(quoteGenerator());
 
 	const cardSelect = new StringSelectMenuBuilder()
-		.setCustomId('card-edit-select')
+		.setCustomId('cardEditSelect')
 		.setPlaceholder('Select a card to edit')
 		.addOptions(wantedCards.cards.map((card) => ({ label: card.name, value: card.name })));
 
@@ -36,3 +37,7 @@ const myWantedCardsCommand = {
 };
 
 export default myWantedCardsCommand;
+
+const cardEditSelect = async (interaction: StringSelectMenuInteraction) => {
+	const cardName = interaction.values[0];
+};
