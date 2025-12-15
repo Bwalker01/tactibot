@@ -1,8 +1,8 @@
 import { DatabaseController } from '../../databaseController';
 import {
 	getAllWantedCardsOfUser,
-	getAllUsersOfWantedCard,
 	getAllWantedCards,
+	getAllUsersOfWantedCard,
 } from '../wantsService';
 
 // Mock the DatabaseController module
@@ -72,8 +72,10 @@ describe('wantsService', () => {
 				mockRows.map((row) => ({
 					id: row.id,
 					userId: row.user_id,
-					cardName: row.card_name,
-					cardLink: row.scryfall_link,
+					card: {
+						name: row.card_name,
+						link: row.scryfall_link,
+					},
 				}))
 			);
 		});
@@ -100,8 +102,18 @@ describe('wantsService', () => {
 		it('should return all wanted cards for a specific user', async () => {
 			const userId = '123';
 			const mockRows = [
-				{ id: 1, userId: userId, cardName: 'Card A' },
-				{ id: 2, userId: userId, cardName: 'Card B' },
+				{
+					id: 1,
+					user_id: userId,
+					card_name: 'Card A',
+					scryfall_link: 'https://scryfall.com/card/123/card-a',
+				},
+				{
+					id: 2,
+					user_id: userId,
+					card_name: 'Card B',
+					scryfall_link: 'https://scryfall.com/card/456/card-b',
+				},
 			];
 
 			mockQueryAll.mockResolvedValue({ rows: mockRows });
@@ -112,7 +124,19 @@ describe('wantsService', () => {
 			expect(mockQueryAll).toHaveBeenCalledWith('SELECT * FROM wanted_cards WHERE user_id = $1', [
 				userId,
 			]);
-			expect(result).toEqual(mockRows);
+			expect(result).toEqual({
+				userId: '123',
+				cards: [
+					{
+						name: 'Card A',
+						link: 'https://scryfall.com/card/123/card-a',
+					},
+					{
+						name: 'Card B',
+						link: 'https://scryfall.com/card/456/card-b',
+					},
+				],
+			});
 		});
 
 		it('should return an empty array when user has no wanted cards', async () => {
@@ -124,7 +148,10 @@ describe('wantsService', () => {
 			expect(mockQueryAll).toHaveBeenCalledWith('SELECT * FROM wanted_cards WHERE user_id = $1', [
 				userId,
 			]);
-			expect(result).toEqual([]);
+			expect(result).toEqual({
+				userId,
+				cards: [],
+			});
 		});
 
 		it('should handle database errors', async () => {
@@ -138,16 +165,11 @@ describe('wantsService', () => {
 			]);
 		});
 
-		it('should handle empty string userId', async () => {
+		it('should error on empty string userId', async () => {
 			const userId = '';
 			mockQueryAll.mockResolvedValue({ rows: [] });
 
-			const result = await getAllWantedCardsOfUser(userId);
-
-			expect(mockQueryAll).toHaveBeenCalledWith('SELECT * FROM wanted_cards WHERE user_id = $1', [
-				userId,
-			]);
-			expect(result).toEqual([]);
+			await expect(getAllWantedCardsOfUser(userId)).rejects.toThrow('User ID is required');
 		});
 	});
 
@@ -155,9 +177,24 @@ describe('wantsService', () => {
 		it('should return all users who want a specific card', async () => {
 			const cardName = 'Card A';
 			const mockRows = [
-				{ id: 1, user_id: '123', card_name: cardName },
-				{ id: 2, user_id: '456', card_name: cardName },
-				{ id: 3, user_id: '789', card_name: cardName },
+				{
+					id: 1,
+					user_id: '123',
+					card_name: cardName,
+					scryfall_link: 'https://scryfall.com/card/123/card-a',
+				},
+				{
+					id: 2,
+					user_id: '456',
+					card_name: cardName,
+					scryfall_link: 'https://scryfall.com/card/123/card-a',
+				},
+				{
+					id: 3,
+					user_id: '789',
+					card_name: cardName,
+					scryfall_link: 'https://scryfall.com/card/456/card-a',
+				},
 			];
 
 			mockQueryAll.mockResolvedValue({ rows: mockRows });
@@ -168,19 +205,19 @@ describe('wantsService', () => {
 			expect(mockQueryAll).toHaveBeenCalledWith('SELECT * FROM wanted_cards WHERE card_name = $1', [
 				cardName,
 			]);
-			expect(result).toEqual(mockRows);
+			expect(result).toEqual({
+				card: {
+					name: cardName,
+					link: 'https://scryfall.com/card/123/card-a',
+				},
+				userIds: ['123', '456', '789'],
+			});
 		});
 
-		it('should return an empty array when no users want the card', async () => {
-			const cardName = 'Non-existent Card';
+		it('should error on empty card name', async () => {
 			mockQueryAll.mockResolvedValue({ rows: [] });
 
-			const result = await getAllUsersOfWantedCard(cardName);
-
-			expect(mockQueryAll).toHaveBeenCalledWith('SELECT * FROM wanted_cards WHERE card_name = $1', [
-				cardName,
-			]);
-			expect(result).toEqual([]);
+			await expect(getAllUsersOfWantedCard('')).rejects.toThrow('Card name is required');
 		});
 
 		it('should handle database errors', async () => {
@@ -196,7 +233,14 @@ describe('wantsService', () => {
 
 		it('should handle card names with special characters', async () => {
 			const cardName = "Card's Name (Special Edition)";
-			const mockRows = [{ id: 1, user_id: '123', card_name: cardName }];
+			const mockRows = [
+				{
+					id: 1,
+					user_id: '123',
+					card_name: cardName,
+					scryfall_link: 'https://scryfall.com/card/123/card-a',
+				},
+			];
 
 			mockQueryAll.mockResolvedValue({ rows: mockRows });
 
@@ -205,19 +249,13 @@ describe('wantsService', () => {
 			expect(mockQueryAll).toHaveBeenCalledWith('SELECT * FROM wanted_cards WHERE card_name = $1', [
 				cardName,
 			]);
-			expect(result).toEqual(mockRows);
-		});
-
-		it('should handle empty string card name', async () => {
-			const cardName = '';
-			mockQueryAll.mockResolvedValue({ rows: [] });
-
-			const result = await getAllUsersOfWantedCard(cardName);
-
-			expect(mockQueryAll).toHaveBeenCalledWith('SELECT * FROM wanted_cards WHERE card_name = $1', [
-				cardName,
-			]);
-			expect(result).toEqual([]);
+			expect(result).toEqual({
+				card: {
+					name: cardName,
+					link: 'https://scryfall.com/card/123/card-a',
+				},
+				userIds: ['123'],
+			});
 		});
 	});
 });

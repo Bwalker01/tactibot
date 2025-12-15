@@ -50,11 +50,14 @@ describe('newWantedCard', () => {
 			expect(mockFetch).toHaveBeenCalledWith(
 				'https://api.scryfall.com/cards/named?fuzzy=lightning+bolt'
 			);
-			expect(mockAddWantedCard).toHaveBeenCalledWith({
-				userId: '123456789',
-				cardName: 'Lightning Bolt',
-				cardLink: 'https://scryfall.com/card/m21/161/lightning-bolt',
-			});
+			expect(mockAddWantedCard).toHaveBeenCalledWith(
+				expect.objectContaining({
+					userId: '123456789',
+					cards: [
+						{ name: 'Lightning Bolt', link: 'https://scryfall.com/card/m21/161/lightning-bolt' },
+					],
+				})
+			);
 		});
 
 		it('should handle valid cards from a fuzzy search', async () => {});
