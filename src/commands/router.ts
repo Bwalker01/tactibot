@@ -1,6 +1,6 @@
 import type { Interaction, SlashCommandBuilder } from 'discord.js';
 import { isChatInputCommand } from '../utils/interactionTypeGuard';
-import commands from '../commands/commands';
+import commands from './commands';
 
 type FlatCommandMap = {
 	[name: string]: {
