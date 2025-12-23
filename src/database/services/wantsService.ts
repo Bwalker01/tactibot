@@ -75,3 +75,10 @@ export const addWantedCard = async (wants: UserWantedCards): Promise<boolean> =>
 
 	return true;
 };
+
+export const removeWantedCard = async (cardName: string): Promise<boolean> => {
+	const db = DatabaseController.getInstance();
+
+	await db.execute('DELETE FROM wanted_cards WHERE card_name = $1', [cardName]);
+	return true;
+};

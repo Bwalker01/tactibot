@@ -1,10 +1,14 @@
 import eightballCommand from './fun/eightball';
 import allWantedCardsCommand from './trading/allWantedCards';
-import myWantedCardsCommand from './trading/myWantedCards';
+import {
+	myWantedCardsCommand,
+	cardEditSelectMenu,
+	removeWantedCardButton,
+} from './trading/myWantedCards';
 import newWantedCardCommand from './trading/newWantedCard';
 import pingCommand from './utility/ping';
 
-const commands = {
+export const commands = {
 	utility: {
 		ping: pingCommand,
 	},
@@ -18,4 +22,11 @@ const commands = {
 	},
 };
 
-export default commands;
+export const interactions = {
+	trading: {
+		'my-wants': {
+			'card-edit-select': cardEditSelectMenu,
+			'remove-card': removeWantedCardButton,
+		},
+	},
+};

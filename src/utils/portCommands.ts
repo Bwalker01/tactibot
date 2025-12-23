@@ -1,5 +1,5 @@
 import { REST, Routes } from 'discord.js';
-import commands from '../commands/commands';
+import commands from '../commands/interactions';
 
 export async function portCommands({ token, clientId }: { token: string; clientId: string }) {
 	const rest = new REST().setToken(token);

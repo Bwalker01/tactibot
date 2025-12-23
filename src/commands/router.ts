@@ -1,6 +1,6 @@
 import type { Interaction, SlashCommandBuilder } from 'discord.js';
 import { isChatInputCommand, isStringSelectMenuInteraction } from '../utils/interactionTypeGuard';
-import commands from './commands';
+import commands from './interactions';
 
 type FlatCommandMap = {
 	[name: string]: {
