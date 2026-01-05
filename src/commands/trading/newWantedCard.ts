@@ -1,4 +1,9 @@
-import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from 'discord.js';
+import {
+	ChatInputCommandInteraction,
+	EmbedBuilder,
+	MessageFlags,
+	SlashCommandBuilder,
+} from 'discord.js';
 import { SCRYFALL_API_URL } from '../../utils/constants';
 import { addWantedCard } from '../../database/services/wantsService';
 
@@ -9,11 +14,14 @@ const newWantedCard = async (interaction: ChatInputCommandInteraction) => {
 	const response = await fetch(url);
 	const data = await response.json();
 	if (data.status === 404) {
-		return await interaction.reply({ content: 'Card not found. \\:(', ephemeral: true });
+		return await interaction.reply({
+			content: 'Card not found. \\:(',
+			flags: MessageFlags.Ephemeral,
+		});
 	}
 	const result = await addWantedCard({
 		userId: interaction.user.id,
-		cards: [{ name: data.name, link: data.scryfall_uri }],
+		cards: [{ name: data.name, link: data.scryfall_uri, id: data.id }],
 	});
 	if (result) {
 		const imageUrl =
@@ -26,9 +34,12 @@ const newWantedCard = async (interaction: ChatInputCommandInteraction) => {
 			.setTitle(`${data.name} added successfully! \\:)`)
 			.setImage(imageUrl || null);
 
-		return await interaction.reply({ embeds: [embed], ephemeral: true });
+		return await interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
 	}
-	return await interaction.reply({ content: 'Failed to add card. \\:(', ephemeral: true });
+	return await interaction.reply({
+		content: 'Failed to add card. \\:(',
+		flags: MessageFlags.Ephemeral,
+	});
 };
 
 const newWantedCardCommand = {

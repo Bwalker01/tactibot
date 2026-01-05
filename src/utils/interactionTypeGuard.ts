@@ -1,4 +1,5 @@
 import type {
+	ButtonInteraction,
 	ChatInputCommandInteraction,
 	Interaction,
 	StringSelectMenuInteraction,
@@ -12,4 +13,8 @@ export function isStringSelectMenuInteraction(
 	event: Interaction
 ): event is StringSelectMenuInteraction {
 	return event.isStringSelectMenu();
+}
+
+export function isButtonInteraction(event: Interaction): event is ButtonInteraction {
+	return event.isButton();
 }

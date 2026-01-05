@@ -5,6 +5,7 @@ import {
 	ButtonStyle,
 	ChatInputCommandInteraction,
 	EmbedBuilder,
+	MessageFlags,
 	SlashCommandBuilder,
 	StringSelectMenuBuilder,
 	StringSelectMenuInteraction,
@@ -17,6 +18,13 @@ import { UserWantedCards } from '../../database/types/wantedCards';
 const myWantedCards = async (interaction: ChatInputCommandInteraction) => {
 	const wantedCards = await getAllWantedCardsOfUser(interaction.user.id);
 
+	if (wantedCards.cards.length === 0) {
+		return await interaction.reply({
+			content: 'You have no wanted cards. Use `/want <card-name>` to add new ones!',
+			flags: MessageFlags.Ephemeral,
+		});
+	}
+
 	const embed = new EmbedBuilder()
 		.setTitle('Your Wants:')
 		.setDescription(wantedCards.cards.map((card) => `[${card.name}](${card.link})`).join('\n'))
@@ -27,7 +35,11 @@ const myWantedCards = async (interaction: ChatInputCommandInteraction) => {
 
 	const actionRow = new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(cardSelect);
 
-	await interaction.reply({ embeds: [embed], components: [actionRow], ephemeral: true });
+	await interaction.reply({
+		embeds: [embed],
+		components: [actionRow],
+		flags: MessageFlags.Ephemeral,
+	});
 };
 
 export const myWantedCardsCommand = {
@@ -37,46 +49,76 @@ export const myWantedCardsCommand = {
 	execute: myWantedCards,
 };
 
-const cardEditSelect = async (interaction: StringSelectMenuInteraction) => {
-	const cardName = interaction.values[0];
-	if (!cardName) return;
+const cardEditSelectInteraction = async (interaction: StringSelectMenuInteraction) => {
+	await interaction.deferUpdate();
+	const cardId = interaction.values[0];
+	if (!cardId) return;
 	const wantedCards = await getAllWantedCardsOfUser(interaction.user.id);
-	await interaction.message.edit({
+	await interaction.editReply({
 		components: [
 			new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(
-				cardEditSelectMenu.create(wantedCards)
+				cardEditSelectMenu.create(wantedCards, cardId)
 			),
-			new ActionRowBuilder<ButtonBuilder>().addComponents(removeWantedCardButton.create(cardName)),
+			new ActionRowBuilder<ButtonBuilder>().addComponents(removeWantedCardButton.create(cardId)),
 		],
 	});
 };
 
 export const cardEditSelectMenu = {
-	create: (wantedCards: UserWantedCards) =>
-		new StringSelectMenuBuilder()
+	create: (wantedCards: UserWantedCards, selectedCardId?: string) => {
+		return new StringSelectMenuBuilder()
 			.setCustomId('trading:my-wants:card-edit-select')
 			.setPlaceholder('Select a card to edit')
-			.addOptions(wantedCards.cards.map((card) => ({ label: card.name, value: card.name }))),
-	execute: cardEditSelect,
+			.addOptions(
+				wantedCards.cards.map((card) => ({
+					label: card.name,
+					value: card.id,
+					default: card.id === selectedCardId,
+				}))
+			);
+	},
+	execute: cardEditSelectInteraction,
 };
 
 const removeWantedCardInteraction = async (interaction: ButtonInteraction) => {
-	const cardName = interaction.customId.split(':')[3];
-	if (!cardName) return;
-	const result = await removeWantedCard(cardName);
+	await interaction.deferUpdate();
+	const cardId = interaction.customId.split(':')[3];
+	if (!cardId) return;
+	const result = await removeWantedCard(cardId);
 	if (result) {
-		await interaction.message.edit({
-			components: [],
+		const wantedCards = await getAllWantedCardsOfUser(interaction.user.id);
+		const hasWantedCards = wantedCards.cards.length > 0;
+		const description = hasWantedCards
+			? wantedCards.cards.map((card) => `[${card.name}](${card.link})`).join('\n')
+			: 'You have no more wanted cards, use `/want <card-name>` to add new ones!';
+		const embed = new EmbedBuilder()
+			.setTitle('Your Wants:')
+			.setDescription(description)
+			.setFooter({ text: footerCreator() });
+		embed.addFields(quoteGenerator());
+
+		await interaction.editReply({
+			embeds: [embed],
+			components: hasWantedCards
+				? [
+						new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(
+							cardEditSelectMenu.create(wantedCards)
+						),
+					]
+				: [],
 		});
 	} else {
-		await interaction.reply({ content: 'Failed to remove card. \\:(', ephemeral: true });
+		await interaction.reply({
+			content: 'Failed to remove card. \\:(',
+			flags: MessageFlags.Ephemeral,
+		});
 	}
 };
 
 export const removeWantedCardButton = {
-	create: (cardName: string) =>
+	create: (cardId: string) =>
 		new ButtonBuilder()
-			.setCustomId(`trading:my-wants:remove-card:${cardName}`)
+			.setCustomId(`trading:my-wants:remove-card:${cardId}`)
 			.setLabel('Remove')
 			.setStyle(ButtonStyle.Danger),
 	execute: removeWantedCardInteraction,

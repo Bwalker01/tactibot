@@ -1,4 +1,9 @@
-import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from 'discord.js';
+import {
+	ChatInputCommandInteraction,
+	EmbedBuilder,
+	MessageFlags,
+	SlashCommandBuilder,
+} from 'discord.js';
 import { getAllWantedCards } from '../../database/services/wantsService';
 import { quoteGenerator } from '../../utils/quoteGenerator';
 import { footerCreator } from '../../utils/footerCreator';
@@ -29,7 +34,7 @@ const allWantedCards = async (interaction: ChatInputCommandInteraction) => {
 		});
 	}
 	embed.addFields(quoteGenerator());
-	await interaction.reply({ embeds: [embed], ephemeral: true });
+	await interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
 };
 
 const allWantedCardsCommand = {

@@ -3,4 +3,5 @@ export type WantRaw = {
 	user_id: string;
 	card_name: string;
 	scryfall_link: string;
+	card_id: string;
 };

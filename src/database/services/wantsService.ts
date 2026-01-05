@@ -16,6 +16,7 @@ export const getAllWantedCards = async (): Promise<WantedCard[]> => {
 		card: {
 			name: row.card_name,
 			link: row.scryfall_link,
+			id: row.scryfall_id,
 		},
 	}));
 };
@@ -40,6 +41,7 @@ export const getAllWantedCardsOfUser = async (userId: string): Promise<UserWante
 		cards: result.rows.map((row) => ({
 			name: row.card_name,
 			link: row.scryfall_link,
+			id: row.card_id,
 		})),
 	};
 };
@@ -58,6 +60,7 @@ export const getAllUsersOfWantedCard = async (cardName: string): Promise<CardWan
 		card: {
 			name: cardName,
 			link: result.rows[0]?.scryfall_link || '',
+			id: result.rows[0]?.card_id || '',
 		},
 		userIds: result.rows.map((row) => row.user_id),
 	};
@@ -68,17 +71,17 @@ export const addWantedCard = async (wants: UserWantedCards): Promise<boolean> =>
 
 	for (const want of wants.cards) {
 		await db.execute(
-			'INSERT INTO wanted_cards (user_id, card_name, scryfall_link) VALUES ($1, $2, $3)',
-			[wants.userId, want.name, want.link]
+			'INSERT INTO wanted_cards (user_id, card_name, scryfall_link, card_id) VALUES ($1, $2, $3, $4)',
+			[wants.userId, want.name, want.link, want.id]
 		);
 	}
 
 	return true;
 };
 
-export const removeWantedCard = async (cardName: string): Promise<boolean> => {
+export const removeWantedCard = async (cardId: string): Promise<boolean> => {
 	const db = DatabaseController.getInstance();
 
-	await db.execute('DELETE FROM wanted_cards WHERE card_name = $1', [cardName]);
+	await db.execute('DELETE FROM wanted_cards WHERE card_id = $1', [cardId]);
 	return true;
 };
