@@ -1,5 +1,5 @@
 import { Client, Events, GatewayIntentBits } from 'discord.js';
-import { routeInteraction } from '../interactions/router';
+import { routeInteraction } from '../commands/router';
 import { portCommands } from './portCommands';
 
 export function setupClient(token: string) {

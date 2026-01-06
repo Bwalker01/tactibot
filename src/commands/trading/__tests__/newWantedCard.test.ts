@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction } from 'discord.js';
+import { ChatInputCommandInteraction, MessageFlags } from 'discord.js';
 import newWantedCardCommand from '../newWantedCard';
 import { addWantedCard } from '../../../database/services/wantsService';
 import { mockInteractionBasics } from '../../../utils/testUtils';
@@ -50,11 +50,14 @@ describe('newWantedCard', () => {
 			expect(mockFetch).toHaveBeenCalledWith(
 				'https://api.scryfall.com/cards/named?fuzzy=lightning+bolt'
 			);
-			expect(mockAddWantedCard).toHaveBeenCalledWith({
-				userId: '123456789',
-				cardName: 'Lightning Bolt',
-				cardLink: 'https://scryfall.com/card/m21/161/lightning-bolt',
-			});
+			expect(mockAddWantedCard).toHaveBeenCalledWith(
+				expect.objectContaining({
+					userId: '123456789',
+					cards: [
+						{ name: 'Lightning Bolt', link: 'https://scryfall.com/card/m21/161/lightning-bolt' },
+					],
+				})
+			);
 		});
 
 		it('should handle valid cards from a fuzzy search', async () => {});
@@ -178,7 +181,7 @@ describe('newWantedCard', () => {
 
 			expect(mockInteraction.reply).toHaveBeenCalledWith({
 				content: 'Card not found. \\:(',
-				ephemeral: true,
+				flags: MessageFlags.Ephemeral,
 			});
 			expect(mockAddWantedCard).not.toHaveBeenCalled();
 		});
@@ -212,7 +215,7 @@ describe('newWantedCard', () => {
 
 			expect(mockInteraction.reply).toHaveBeenCalledWith({
 				content: 'Failed to add card. \\:(',
-				ephemeral: true,
+				flags: MessageFlags.Ephemeral,
 			});
 		});
 	});
