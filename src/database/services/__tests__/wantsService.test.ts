@@ -107,12 +107,14 @@ describe('wantsService', () => {
 					user_id: userId,
 					card_name: 'Card A',
 					scryfall_link: 'https://scryfall.com/card/123/card-a',
+					card_id: '123',
 				},
 				{
 					id: 2,
 					user_id: userId,
 					card_name: 'Card B',
 					scryfall_link: 'https://scryfall.com/card/456/card-b',
+					card_id: '456',
 				},
 			];
 
@@ -130,10 +132,12 @@ describe('wantsService', () => {
 					{
 						name: 'Card A',
 						link: 'https://scryfall.com/card/123/card-a',
+						id: '123',
 					},
 					{
 						name: 'Card B',
 						link: 'https://scryfall.com/card/456/card-b',
+						id: '456',
 					},
 				],
 			});
@@ -182,18 +186,21 @@ describe('wantsService', () => {
 					user_id: '123',
 					card_name: cardName,
 					scryfall_link: 'https://scryfall.com/card/123/card-a',
+					card_id: '123',
 				},
 				{
 					id: 2,
 					user_id: '456',
 					card_name: cardName,
 					scryfall_link: 'https://scryfall.com/card/123/card-a',
+					card_id: '123',
 				},
 				{
 					id: 3,
 					user_id: '789',
 					card_name: cardName,
 					scryfall_link: 'https://scryfall.com/card/456/card-a',
+					card_id: '123',
 				},
 			];
 
@@ -209,6 +216,7 @@ describe('wantsService', () => {
 				card: {
 					name: cardName,
 					link: 'https://scryfall.com/card/123/card-a',
+					id: '123',
 				},
 				userIds: ['123', '456', '789'],
 			});
@@ -239,6 +247,7 @@ describe('wantsService', () => {
 					user_id: '123',
 					card_name: cardName,
 					scryfall_link: 'https://scryfall.com/card/123/card-a',
+					card_id: '123',
 				},
 			];
 
@@ -253,6 +262,7 @@ describe('wantsService', () => {
 				card: {
 					name: cardName,
 					link: 'https://scryfall.com/card/123/card-a',
+					id: '123',
 				},
 				userIds: ['123'],
 			});

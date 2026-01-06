@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction } from 'discord.js';
+import { ChatInputCommandInteraction, MessageFlags } from 'discord.js';
 import newWantedCardCommand from '../newWantedCard';
 import { addWantedCard } from '../../../database/services/wantsService';
 import { mockInteractionBasics } from '../../../utils/testUtils';
@@ -181,7 +181,7 @@ describe('newWantedCard', () => {
 
 			expect(mockInteraction.reply).toHaveBeenCalledWith({
 				content: 'Card not found. \\:(',
-				ephemeral: true,
+				flags: MessageFlags.Ephemeral,
 			});
 			expect(mockAddWantedCard).not.toHaveBeenCalled();
 		});
@@ -215,7 +215,7 @@ describe('newWantedCard', () => {
 
 			expect(mockInteraction.reply).toHaveBeenCalledWith({
 				content: 'Failed to add card. \\:(',
-				ephemeral: true,
+				flags: MessageFlags.Ephemeral,
 			});
 		});
 	});
